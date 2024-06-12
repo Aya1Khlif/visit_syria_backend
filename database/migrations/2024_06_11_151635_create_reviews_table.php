@@ -12,6 +12,7 @@ class CreateReviewsTable extends Migration
             $table->id();
             $table->morphs('reviewable');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedTinyInteger('rating');
             $table->text('comment');
             $table->timestamp('date');
             $table->timestamps();

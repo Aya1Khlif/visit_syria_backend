@@ -2,8 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\Restaurant\RestaurantController;
-
+use App\Http\Controllers\Restaurant\RestaurantController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,3 +22,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::apiResource('restaurants', RestaurantController::class);
+
+
+Route::get('/reports', [ReportController::class, 'index']);
+
+
+
+
+
+// Reviews Routes
+Route::get('restaurants/{id}/reviews', [ReviewController::class, 'index']);
+Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store']);
+Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show']);
+Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update']);
+Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy']);
