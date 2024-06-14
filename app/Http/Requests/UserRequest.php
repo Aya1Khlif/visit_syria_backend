@@ -2,14 +2,12 @@
 
 namespace App\Http\Requests;
 
-// use Dotenv\Validator;
-
 use App\Services\ApiResponseService;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
-class RegisteRequestr extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,7 +28,8 @@ class RegisteRequestr extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'image'=>'required|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg'
+            'image'=>'nullable|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            'role'=>'required|string'
         ];
 
     }
@@ -41,4 +40,5 @@ class RegisteRequestr extends FormRequest
 
         throw new HttpResponseException(ApiResponseService::error('Validation Errors',422,$errors));
     }
+
 }

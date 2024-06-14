@@ -29,15 +29,19 @@ class AuthService
     }
 
     // Register a new user with the given data
-    public function register(array $data)
+    public function storeUser(array $data)
     {
-        $image=uploadImage($data['image']);
+        if (isset($data['image'])){
+
+            $image=uploadImage($data['image']);
+        }else{$image=null;}
 
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'image'=>$image
+            'image'=>$image,
+            'role'=>$data['role']
         ]);
 
         $token = Auth::login($user);

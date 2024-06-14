@@ -58,20 +58,20 @@ class AuthController extends Controller
 
     }
 
-    public function register(RegisteRequestr $request){
+    // public function register(RegisteRequestr $request){
 
-        $data = $request->validated();
-        $response = $this->authService->register($data);
+    //     $data = $request->validated();
+    //     $response = $this->authService->register($data);
 
 
-        return ApiResponseService::success([
-            'user' => $response['user'],
-            'authorisation' => [
-                'token' => $response['token'],
-                'type' => 'bearer',
-            ]
-        ], 'User created successfully', $response['code']);
-    }
+    //     return ApiResponseService::success([
+    //         'user' => $response['user'],
+    //         'authorisation' => [
+    //             'token' => $response['token'],
+    //             'type' => 'bearer',
+    //         ]
+    //     ], 'User created successfully', $response['code']);
+    // }
 
 
     public function logout()
