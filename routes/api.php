@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Restaurant\RestaurantController;
@@ -20,19 +22,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::controller(AuthController::class)->group(function () {
+    Route::post('login', 'login');
+    //Route::post('register', 'register');
+    Route::post('logout', 'logout')->middleware('auth:api');
+    //Route::post('refresh', 'refresh')->middleware('auth:api');
 
-Route::apiResource('restaurants', RestaurantController::class);
+});
 
+Route::middleware(['auth:api','admin'])->controller(SettingController::class)->prefix('users')->group(function(){
+    Route::post('store_user', 'store');
+    Route::post('update_user/{user}', 'update');
+    Route::delete('delete_user/{user}', 'destroy');
 
-Route::get('/reports', [ReportController::class, 'index']);
-
-
-
-
-
-// Reviews Routes
-Route::get('restaurants/{id}/reviews', [ReviewController::class, 'index']);
-Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store']);
-Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show']);
-Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update']);
-Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy']);
+});
