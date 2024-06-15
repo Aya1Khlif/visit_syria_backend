@@ -36,3 +36,13 @@ Route::middleware(['auth:api','admin'])->controller(SettingController::class)->p
     Route::delete('delete_user/{user}', 'destroy');
 
 });
+
+Route::apiResource('restaurants', RestaurantController::class)->middleware(['auth:api','admin']);
+Route::get('/reports', [ReportController::class, 'index']);
+
+// Reviews Routes
+Route::get('restaurants/{id}/reviews', [ReviewController::class, 'index'])->middleware(['auth:api']);
+Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store'])->middleware(['auth:api']);
+Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show'])->middleware(['auth:api']);
+Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update'])->middleware(['auth:api']);
+Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy'])->middleware(['auth:api']);
