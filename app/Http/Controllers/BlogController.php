@@ -8,10 +8,15 @@ use App\Models\Blog;
 use Illuminate\Http\Request;
 use App\Http\Resources\BlogResource;
 use App\Http\Traits\UploadFileTrait;
+use App\Http\Traits\ApiResponseTrait;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 
 class BlogController extends Controller
 {
+    use ApiResponseTrait, UploadFileTrait;
     /**
      * Display a listing of the resource.
      */
@@ -27,21 +32,26 @@ class BlogController extends Controller
      */
     public function store(StoreBlogRequest $request)
     {
-         try {
-                //code...
-                $blog = new Blog();
-                $blog->title       = $request->title;
-                $blog->description = $request->description;
-                $blog->photo       = $this->UploadFile($request, 'Blog', 'photo');
-    
-                $blog->save();
-    
-                $data = new BlogResource($blog);
-                return $this->customeResponse($data, 'Blog Created Successfully', 201);
-            } catch (\Throwable $th) {
-                Log::error($th);
-                return $this->customeResponse(null, 'Failed To Create', 500);
-            }
+        try {
+            DB::beginTransaction();
+            $blog = Blog::create([
+                'title' => $request->title,
+                'content' => $request->content,
+                'city' => $request->city,
+                'category' => $request->category,
+                'more_images' => $request->more_images,
+                 //   'main_image' => $this->UploadFile($request, 'Blog', 'main_image'),
+                 //for test in postman
+                'main_image' => $request->more_images,
+            
+            ]);
+            DB::commit();
+            return $this->customeResponse(new BlogResource($blog), 'Blog Created Successfully', 201);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th);
+            return $this->customeResponse(null, 'Failed To Create Blog', 500);
+        }
     }
 
     /**
@@ -59,21 +69,29 @@ class BlogController extends Controller
      */
     public function update(UpdateBlogRequest  $request, Blog $blog)
     {
-        //
-        try {
             //code...
-            $blog->title       = $request->input('title') ?? $blog->title;
-            $blog->description = $request->input('description') ?? $blog->description;
-            $blog->photo       = $this->fileExists($request, 'Blogs', 'photo') ?? $blog->photo;
-
-            $blog->save();
-
-            $data = new BlogResource($blog);
-            return $this->customeResponse($data, 'Blog Updated Successfully', 200);
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return response()->json(['message' => 'Something Error !'], 500);
-        }
+            try {
+                DB::beginTransaction();
+    
+                $blog->title       = $request->input('title') ?? $blog->title;
+                $blog->content = $request->input('content') ?? $blog->content;
+                $blog->city = $request->input('city') ?? $blog->city;
+                $blog->category = $request->input('category') ?? $blog->category;
+                // //for test in postman
+                $blog->main_image   = $request->input('main_image') ?? $blog->main_image;
+                $blog->more_images   = $request->input('more_images') ?? $blog->more_images;
+    
+                $blog->save();
+    
+                DB::commit();
+    
+                return $this->customeResponse(new BlogResource($blog), 'Blog Updated Successfully', 200);
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                Log::error($th);
+                return response()->json(['message' => 'Something Error !'], 500);
+            }
+        
     }
 
     /**

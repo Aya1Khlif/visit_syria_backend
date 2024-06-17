@@ -10,10 +10,21 @@ class Blog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'title', 
         'main_image',
         'content',
-        'long_description',
+        'city',
+        'category',
         'more_images',
     ];
+
+
+    /**
+     * Get the user that owns(adds) the blog.
+     */
+    
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

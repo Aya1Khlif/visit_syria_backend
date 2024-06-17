@@ -34,6 +34,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the blogs for the user (which he added it).
+     */
+    public function blogs(): HasMany
+    {
+        return $this->hasMany(Blog::class);
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>

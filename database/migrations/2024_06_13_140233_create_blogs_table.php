@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('main_image');
             $table->string('content');
-            $table->string('long_description');
+            $table->string('city');
+            $table->string('category');
             $table->string('more_images');
             $table->timestamps();
         });

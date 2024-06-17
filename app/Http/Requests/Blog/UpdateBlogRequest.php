@@ -22,11 +22,17 @@ class UpdateBlogRequest extends FormRequest
     public function rules(): array
     {
         return[
-            'title'       => 'required|string|max:255',
-            'content'       => 'required|string|max:255',
-            'long_description' => 'required|string|max:1000',
-            'main_image'       => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
-            'more_images'       => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+            'title'       => 'string|max:255',
+            'content'       => 'string|max:1000',
+            'city' => 'string|max:20',
+            'category' => 'string|max:1',
+            
+           // 'main_image'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+           // 'more_images'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+
+           //for test in postman
+           'main_image' => 'string|max:20', 
+           'more_images' => 'string|max:20',
     ];
     }
 }
