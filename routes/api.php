@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Restaurant\RestaurantController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BlogController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -46,3 +48,5 @@ Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store'])->mid
 Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show'])->middleware(['auth:api']);
 Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update'])->middleware(['auth:api']);
 Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy'])->middleware(['auth:api']);
+
+Route::apiResource('blog', BlogController::class);
