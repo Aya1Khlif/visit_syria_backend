@@ -8,6 +8,8 @@ use App\Http\Controllers\Restaurant\RestaurantController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\HotelController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,14 +33,13 @@ Route::controller(AuthController::class)->group(function () {
 
 });
 //authentication
-Route::middleware(['auth:api','admin'])->controller(SettingController::class)->prefix('users')->group(function(){
+Route::middleware(['auth:api', 'admin'])->controller(SettingController::class)->prefix('users')->group(function () {
     Route::post('store_user', 'store');
     Route::post('update_user/{user}', 'update');
     Route::delete('delete_user/{user}', 'destroy');
-
 });
 //restuRANT
-Route::apiResource('restaurants', RestaurantController::class)->middleware(['auth:api','admin']);
+Route::apiResource('restaurants', RestaurantController::class)->middleware(['auth:api', 'admin']);
 Route::get('/reports', [ReportController::class, 'index']);
 
 //Reviews Routes//
@@ -50,3 +51,6 @@ Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController
 
 //blog
 Route::apiResource('blog', BlogController::class);
+
+//Hotels
+Route::apiResource('hotels', HotelController::class);
