@@ -30,14 +30,14 @@ Route::controller(AuthController::class)->group(function () {
     //Route::post('refresh', 'refresh')->middleware('auth:api');
 
 });
-
+//authentication
 Route::middleware(['auth:api','admin'])->controller(SettingController::class)->prefix('users')->group(function(){
     Route::post('store_user', 'store');
     Route::post('update_user/{user}', 'update');
     Route::delete('delete_user/{user}', 'destroy');
 
 });
-
+//restuRANT
 Route::apiResource('restaurants', RestaurantController::class)->middleware(['auth:api','admin']);
 Route::get('/reports', [ReportController::class, 'index']);
 
@@ -48,4 +48,5 @@ Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::c
 Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update'])->middleware(['auth:api']);
 Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy'])->middleware(['auth:api']);
 
+//blog
 Route::apiResource('blog', BlogController::class);
