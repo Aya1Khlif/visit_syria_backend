@@ -8,7 +8,6 @@ use App\Http\Controllers\Restaurant\RestaurantController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BlogController;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -42,7 +41,7 @@ Route::middleware(['auth:api','admin'])->controller(SettingController::class)->p
 Route::apiResource('restaurants', RestaurantController::class)->middleware(['auth:api','admin']);
 Route::get('/reports', [ReportController::class, 'index']);
 
-// Reviews Routes
+//Reviews Routes//
 Route::get('restaurants/{id}/reviews', [ReviewController::class, 'index'])->middleware(['auth:api']);
 Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store'])->middleware(['auth:api']);
 Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show'])->middleware(['auth:api']);
