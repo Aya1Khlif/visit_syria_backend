@@ -16,7 +16,8 @@ class Blog extends Model
         'content',
         'city',
         'category',
-        'more_images',
+       // 'more_images',
+        'user_id'
     ];
 
 

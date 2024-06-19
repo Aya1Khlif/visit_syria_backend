@@ -19,9 +19,11 @@ return new class extends Migration
             $table->text('long_description');
             $table->string('exterior_photos')->nullable();
             $table->string('interior_photos')->nullable();
-            $table->string('more_images')->nullable();
+           // $table->string('more_images')->nullable();
             $table->text('services')->nullable();
             $table->decimal('price', 8, 2);
+            $table->foreignId('user_id')->constrained();
+
             $table->timestamps();
         });
     }

@@ -42,6 +42,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Blog::class);
     }
 
+    public function hotels(): HasMany
+    {
+        return $this->hasMany(Hotel::class);
+    }
+
+    public function landMarks(): HasMany
+    {
+        return $this->hasMany(Landmarks::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

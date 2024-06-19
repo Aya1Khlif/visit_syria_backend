@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests\Landmarks\LandmarksRequest;
 use App\Http\Requests\Landmarks\UpdateLandmarksRequest;
+use App\Services\ApiResponseService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class LandmarksController extends Controller
 {
@@ -36,8 +39,23 @@ class LandmarksController extends Controller
      */
     public function store(LandmarksRequest $request)
     {
-        
-        $landmarks = Landmarks::create($request->validated());
+
+       // $landmarks = Landmarks::create($request->validated());
+       $exterior_photos=uploadImage($request->exterior_photos);
+        $interior_photos=uploadImage($request->interior_photos);
+
+        $landmarks=Landmarks::create([
+            'user_id'=>$request->user_id,
+            'name'=>$request->name,
+            'location'=>$request->location,
+             'short_description'=>$request->short_description,
+             'long_description'=>$request->long_description,
+             'exterior_photos'=>$exterior_photos,
+             'interior_photos'=>$interior_photos,
+             //'more_images'=>$request->,
+             'services'=>$request->services,
+             'price'=>$request->price,
+            ]);
 
         return response()->json($landmarks, 201);
     }
@@ -55,14 +73,71 @@ class LandmarksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateLandmarksRequest $request, $id)
+    public function update(UpdateLandmarksRequest $request,Landmarks $landmark)
     {
-        $landmarks = Landmarks::findOrFail($id);
+        // $landmarks = Landmarks::findOrFail($id);
 
-        $landmarks->update($request->validated());
+        // $landmarks->update($request->validated());
 
-        return response()->json($landmarks);
-    }
+        // return response()->json($landmarks);
+        $landmarkData=[];
+
+        try {
+
+
+            DB::beginTransaction();
+
+
+            if($request->name){
+                $landmarkData['name']=$request->name;
+            }
+            if($request->location){
+                $landmarkData['location']=$request->location;
+            }
+            if($request->short_description){
+                $landmarkData['short_description']=$request->short_description;
+            }
+            if($request->long_description){
+                $landmarkData['long_description']=$request->long_description;
+            }
+            if($request->services){
+                $landmarkData['services']=$request->services;
+            }
+            if($request->price){
+                $landmarkData['price']=$request->price;
+            }
+
+
+            if($request->exterior_photos){
+                $exterior_photos=uploadImage($request->exterior_photos);
+                $landmarkData['exterior_photos']=$exterior_photos;
+
+            }
+            if($request->interior_photos){
+                $interior_photos=uploadImage($request->interior_photos);
+                $landmarkData['interior_photos']=$interior_photos;
+
+            }
+
+            $landmark->update($landmarkData);
+
+
+            DB::commit();
+
+
+            return ApiResponseService::success([
+                'landmark'=>$landmarkData
+            ],'landmark Updated successfully',200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th);
+            return response()->json(['message' => 'Something Error !'], 500);
+        }
+
+
+    // return response()->json($landmark);
+}
+
 
     /**
      * Remove the specified resource from storage.

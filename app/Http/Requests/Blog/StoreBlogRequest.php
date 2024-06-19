@@ -26,11 +26,9 @@ class StoreBlogRequest extends FormRequest
             'content'       => 'required|string|max:1000',
             'city'           => 'required|string|max:20',
             'category'           => 'required|string|max:1',
-        //    'main_image'       => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
-        //    'more_images'       => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
-           //for test in postman
-           'main_image' => 'required|string|max:20', 
-           'more_images' => 'required|string|max:20',
+            'main_image'       => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+            //'more_images'       => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+
         ];
     }
 }

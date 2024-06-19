@@ -28,6 +28,6 @@ class RestaurantRequest extends FormRequest
             'services' => 'nullable|json',
             'price' => 'required|numeric',
         ];
-        
+
     }
 }

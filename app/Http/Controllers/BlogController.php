@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\BlogResource;
 use App\Http\Traits\UploadFileTrait;
 use App\Http\Traits\ApiResponseTrait;
+use App\Services\ApiResponseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -34,16 +35,20 @@ class BlogController extends Controller
     {
         try {
             DB::beginTransaction();
+           // $main_image=uploadImage($request->main_image);
+
+
             $blog = Blog::create([
                 'title' => $request->title,
                 'content' => $request->content,
                 'city' => $request->city,
                 'category' => $request->category,
-                'more_images' => $request->more_images,
-                 //   'main_image' => $this->UploadFile($request, 'Blog', 'main_image'),
-                 //for test in postman
-                'main_image' => $request->more_images,
-            
+                'user_id'=>$request->user_id,
+               // 'more_images' => $request->more_images,
+                'main_image' => $this->UploadFile($request, 'Blog', 'main_image'),
+
+                // 'main_image' => $main_image
+
             ]);
             DB::commit();
             return $this->customeResponse(new BlogResource($blog), 'Blog Created Successfully', 201);
@@ -70,28 +75,55 @@ class BlogController extends Controller
     public function update(UpdateBlogRequest  $request, Blog $blog)
     {
             //code...
+            $blogData=[];
+
             try {
+
+
                 DB::beginTransaction();
-    
-                $blog->title       = $request->input('title') ?? $blog->title;
-                $blog->content = $request->input('content') ?? $blog->content;
-                $blog->city = $request->input('city') ?? $blog->city;
-                $blog->category = $request->input('category') ?? $blog->category;
-                // //for test in postman
-                $blog->main_image   = $request->input('main_image') ?? $blog->main_image;
-                $blog->more_images   = $request->input('more_images') ?? $blog->more_images;
-    
-                $blog->save();
-    
+
+
+                if($request->title){
+                    $blogData['title']=$request->title;
+                }
+                if($request->content){
+                    $blogData['content']=$request->content;
+                }
+                if($request->city){
+                    $blogData['city']=$request->city;
+                }
+                if($request->category){
+                    $blogData['category']=$request->category;
+                }
+                if($request->main_image){
+                    $main_image=uploadImage($request->main_image);
+                    $blogData['main_image']=$main_image;
+
+                }
+                $blog->update($blogData);
+
+                // $blog->title = $request->input('title') ?? $blog->title;
+                // $blog->content = $request->input('content') ?? $blog->content;
+                // $blog->city = $request->input('city') ?? $blog->city;
+                // $blog->category = $request->input('category') ?? $blog->category;
+                // // //for test in postman
+                // $blog->main_image   = $request->input('main_image') ?? $blog->main_image;
+                // //$blog->more_images   = $request->input('more_images') ?? $blog->more_images;
+
+                // $blog->save();
+
                 DB::commit();
-    
-                return $this->customeResponse(new BlogResource($blog), 'Blog Updated Successfully', 200);
+
+
+                return ApiResponseService::success([
+                    'blog'=>$blogData
+                ],'Blog Updated successfully',200); // return $this->customeResponse(new BlogResource($blog), 'Blog Updated Successfully', 200);
             } catch (\Throwable $th) {
                 DB::rollBack();
                 Log::error($th);
                 return response()->json(['message' => 'Something Error !'], 500);
             }
-        
+
     }
 
     /**

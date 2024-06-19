@@ -20,9 +20,9 @@ class HotelRequest extends FormRequest
             'location' => 'required|string|max:255',
             'short_description' => 'required|string',
             'long_description' => 'nullable|string',
-            'exterior_photos' => 'nullable|string',
-            'interior_photos' => 'nullable|string',
-            'more_images' => 'nullable|string',
+            'exterior_photos' => 'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+            'interior_photos' => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+           // 'more_images' => 'nullable|string',
             'services' => 'nullable|json',
             'price' => 'required|numeric',
         ];

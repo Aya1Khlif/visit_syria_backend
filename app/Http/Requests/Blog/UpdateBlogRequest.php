@@ -26,13 +26,10 @@ class UpdateBlogRequest extends FormRequest
             'content'       => 'string|max:1000',
             'city' => 'string|max:20',
             'category' => 'string|max:1',
-            
-           // 'main_image'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
-           // 'more_images'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+             'main_image'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+             //'more_images'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
 
-           //for test in postman
-           'main_image' => 'string|max:20', 
-           'more_images' => 'string|max:20',
+
     ];
     }
 }

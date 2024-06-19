@@ -21,9 +21,9 @@ class UpdateLandmarksRequest extends FormRequest
             'location' => 'sometimes|string|max:255',
             'short_description' => 'sometimes|string',
             'long_description' => 'nullable|string',
-            'exterior_photos' => 'nullable|string',
-            'interior_photos' => 'nullable|string',
-            'more_images' => 'nullable|string',
+            'exterior_photos' => 'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+            'interior_photos' => 'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+           // 'more_images' => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
             'services' => 'nullable|json',
             'price' => 'sometimes|numeric',
         ];

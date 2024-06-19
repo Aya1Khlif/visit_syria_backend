@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('content');
             $table->string('city');
             $table->string('category');
-            $table->string('more_images');
+           // $table->string('more_images');
+           $table->foreignId('user_id');
             $table->timestamps();
         });
     }
