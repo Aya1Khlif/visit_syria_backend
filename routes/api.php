@@ -8,6 +8,8 @@ use App\Http\Controllers\Restaurant\RestaurantController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -50,3 +52,6 @@ Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController
 
 //blog
 Route::apiResource('blog', BlogController::class);
+
+//about syria
+Route::apiResource('posts', PostController::class)->middleware(['auth:api','admin']);
