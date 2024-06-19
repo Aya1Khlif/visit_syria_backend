@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LandmarksController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,3 +56,6 @@ Route::apiResource('blog', BlogController::class);
 
 //about syria
 Route::apiResource('posts', PostController::class)->middleware(['auth:api','admin']);
+
+//landmarks
+Route::apiResource('landmarks', LandmarksController::class);
