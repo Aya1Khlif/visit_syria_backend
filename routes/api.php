@@ -52,13 +52,13 @@ Route::apiResource('restaurants', RestaurantController::class)->middleware(['aut
 // Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy'])->middleware(['auth:api']);
 
 // //blog
-Route::apiResource('blog', BlogController::class);
+Route::apiResource('blog', BlogController::class)->middleware(['auth:api', 'admin']);;
 
 //about syria
 Route::apiResource('posts', PostController::class)->middleware(['auth:api','admin']);
 
 //landmarks
-Route::apiResource('landmarks', LandmarksController::class);
+Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:api', 'admin']);;
 
 //Hotels
-Route::apiResource('hotels', HotelController::class);
+Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);;
