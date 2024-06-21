@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RestaurantReservations;
 use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Booking;
@@ -23,10 +24,10 @@ class ReportController extends Controller
         $mostVisitedRestaurants = Restaurant::orderByDesc('visits')->take(5)->get();
 
         // Fetch total reservations
-        $totalReservations = Booking::count();
+        $totalReservations = RestaurantReservations::count();
 
         // Fetch total revenue (assuming 'price' field exists in bookings)
-        $totalRevenue = Booking::sum('price');
+        $totalRevenue = RestaurantReservations::sum('price');
 
         // Construct the response
         $data = [

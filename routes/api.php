@@ -11,7 +11,9 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\HotelController;
+use App\Http\Controllers\Restaurant\RestaurantReservationsController;
 
+use App\Http\Controllers\Restaurant\ServiceController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -40,16 +42,42 @@ Route::middleware(['auth:api', 'admin'])->controller(SettingController::class)->
     Route::post('update_user/{user}', 'update');
     Route::delete('delete_user/{user}', 'destroy');
 });
-//restuRANT
-Route::apiResource('restaurants', RestaurantController::class)->middleware(['auth:api', 'admin']);
-// Route::get('/reports', [ReportController::class, 'index']);
 
-//Reviews Routes//
-// Route::get('restaurants/{id}/reviews', [ReviewController::class, 'index'])->middleware(['auth:api']);
-// Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store'])->middleware(['auth:api']);
-// Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show'])->middleware(['auth:api']);
-// Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update'])->middleware(['auth:api']);
-// Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy'])->middleware(['auth:api']);
+
+Route::middleware(['auth:api', 'admin'])->prefix('managing-restaurants')->group(function () {
+
+Route::apiResource('restaurants', RestaurantController::class);
+Route::apiResource('services', ServiceController::class);
+Route::post('restaurants/{restaurant}/sync-services', [ServiceController::class, 'syncServices']);
+
+
+});
+
+Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(function () {
+
+    // Reviews Routes//
+    Route::get('restaurants/{id}/reviews', [ReviewController::class, 'index']);
+  //  Route::post('restaurants/{id}/reviews', [ReviewController::class, 'store'])->middleware(['auth:api']);
+    Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show']);
+   // Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update'])->middleware(['auth:api']);
+    Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy']);
+    
+    });
+
+    Route::middleware(['auth:api', 'admin'])->prefix('managing-reports')->group(function () {
+
+        Route::get('/reports', [ReportController::class, 'index']);
+    });
+
+    Route::middleware(['auth:api', 'admin'])->prefix('managing-restaurants-reservations')->group(function () {
+
+
+        Route::apiResource('reservations', RestaurantReservationsController::class);
+        
+      
+
+        
+        });   
 
 // //blog
 Route::apiResource('blog', BlogController::class)->middleware(['auth:api', 'admin']);;

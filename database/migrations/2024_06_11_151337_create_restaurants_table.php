@@ -19,7 +19,6 @@ class CreateRestaurantsTable extends Migration
             $table->string('exterior_photos')->nullable();
             $table->string('interior_photos')->nullable();
             $table->string('more_images')->nullable();
-            $table->json('services')->nullable();
             $table->decimal('price', 8, 2);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
