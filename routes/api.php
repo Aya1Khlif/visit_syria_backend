@@ -61,7 +61,7 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
     Route::get('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'show']);
    // Route::put('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'update'])->middleware(['auth:api']);
     Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy']);
-    
+
     });
 
     Route::middleware(['auth:api', 'admin'])->prefix('managing-reports')->group(function () {
@@ -73,11 +73,11 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
 
 
         Route::apiResource('reservations', RestaurantReservationsController::class);
-        
-      
 
-        
-        });   
+
+
+
+        });
 
 // //blog
 Route::apiResource('blog', BlogController::class)->middleware(['auth:api', 'admin']);;
