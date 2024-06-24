@@ -29,20 +29,26 @@ class AuthController extends Controller
 
     public function login(LoginRequestr $request)
     {
-        $credentials = $request->validated();
-        $response = $this->authService->login($credentials);
+        $request->validated();
+        $credentials = $request->only('email', 'password');
 
-        if ($response['status'] === 'error') {
-            return ApiResponseService::error($response['message'], $response['code']);
+        $token = Auth::attempt($credentials);
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
         }
 
-        return ApiResponseService::success([
-            'user' => $response['user'],
-            'authorisation' => [
-                'token' => $response['token'],
-                'type' => 'bearer',
-            ]
-        ], 'Login successful', $response['code']);
+        $user = Auth::user();
+        return response()->json([
+                'status' => 'success',
+                'user' => $user,
+                'authorisation' => [
+                    'token' => $token,
+                    'type' => 'bearer',
+                ]
+            ]);
 
 
     /**
