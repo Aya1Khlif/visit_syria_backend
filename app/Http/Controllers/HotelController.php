@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HotelRequest;
 use App\Http\Requests\UpdateHotelRequest;
+use App\Http\Resources\BlogResource;
 use App\Models\Hotel;
 use App\Services\ApiResponseService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Visibility;
 
 class HotelController extends Controller
 {
@@ -56,8 +60,32 @@ class HotelController extends Controller
              'price'=>$request->price,
 
         ]);
+        if ($request->hasFile('more_images')) {
+            $images= $request->file('more_images');
 
-        return response()->json($hotel, 201);
+    foreach($images as $image){
+        $originalName = $image->getClientOriginalName();
+
+        // Check for double extensions in the image name
+        if (preg_match('/\.[^.]+\./', $originalName)) {
+            throw new Exception(trans('general.notAllowedAction'), 403);
+        }
+
+        $storagePath = Storage::disk('public')->put('images', $image, [
+            'visibility' => Visibility::PUBLIC
+        ]);
+        $hotel->images()->create([
+            'image' => $storagePath
+        ]);
+
+
+    }
+
+            }
+return response()->json([
+    'message' => 'Hotel Created Successfully',
+    'hotel' => $hotel
+], 201);
     }
 
     public function update(UpdateHotelRequest $request,Hotel $hotel)
