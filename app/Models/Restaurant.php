@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Restaurant extends Model
 {
     protected $fillable = [
-        'name', 'location', 'short_description', 'long_description', 'exterior_photos', 'interior_photos', 'more_images', 'price','user_id'
+        'name', 'location', 'short_description', 'long_description', 'exterior_photos', 'interior_photos', 'price','user_id'
     ];
 
     public function reviews()
@@ -22,5 +22,10 @@ class Restaurant extends Model
     public function services()
     {
         return $this->belongsToMany(Service::class, 'restaurant_service');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imagable');
     }
 }

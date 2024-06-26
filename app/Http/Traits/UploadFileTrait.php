@@ -2,8 +2,10 @@
 
 namespace App\Http\Traits;
 
+use Exception;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Visibility;
 
 trait UploadFileTrait
 {
@@ -33,5 +35,30 @@ trait UploadFileTrait
         }
         return $this->uploadFile($request, $folder, $fileColumnName);
     }
+
+    // public function SaveImage($images)
+    // {
+
+    //     foreach($images as $image ){
+    //         $originalName = $image->getClientOriginalName();
+
+    //         // Check for double extensions in the image name
+    //         if (preg_match('/\.[^.]+\./', $originalName)) {
+    //             throw new Exception(trans('general.notAllowedAction'), 403);
+    //         }
+
+
+    //         $storagePath = Storage::disk('public')->put('images', $originalName, [
+    //             'visibility' => Visibility::PUBLIC
+    //         ]);
+    //         return $storagePath;}
+
+
+
+
+
+
+
+
 
 }

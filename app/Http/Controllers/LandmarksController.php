@@ -9,8 +9,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Landmarks\LandmarksRequest;
 use App\Http\Requests\Landmarks\UpdateLandmarksRequest;
 use App\Services\ApiResponseService;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Visibility;
 
 class LandmarksController extends Controller
 {
@@ -57,7 +60,33 @@ class LandmarksController extends Controller
              'price'=>$request->price,
             ]);
 
-        return response()->json($landmarks, 201);
+       // return response()->json($landmarks, 201);
+       if ($request->hasFile('more_images')) {
+        $images= $request->file('more_images');
+
+foreach($images as $image){
+    $originalName = $image->getClientOriginalName();
+
+    // Check for double extensions in the image name
+    if (preg_match('/\.[^.]+\./', $originalName)) {
+        throw new Exception(trans('general.notAllowedAction'), 403);
+    }
+
+    $storagePath = Storage::disk('public')->put('images', $image, [
+        'visibility' => Visibility::PUBLIC
+    ]);
+    $landmarks->images()->create([
+        'image' => $storagePath
+    ]);
+
+
+}
+
+        }
+return response()->json([
+'message' => 'Landmark Created Successfully',
+'landmarks' => $landmarks
+], 201);
     }
 
     /**

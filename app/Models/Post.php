@@ -15,4 +15,9 @@ class Post extends Model
         'title',
         'body',
     ];
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imagable');
+    }
 }

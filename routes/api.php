@@ -11,9 +11,12 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\HotelController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\Restaurant\RestaurantReservationsController;
 
 use App\Http\Controllers\Restaurant\ServiceController;
+use Spatie\Permission\Models\Role;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -90,3 +93,10 @@ Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:a
 
 //Hotels
 Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);;
+
+
+Route::controller(ImagesController::class)->group(function(){
+
+    Route::post('BlogImages/{blog_id}','BlogImages');
+
+});
