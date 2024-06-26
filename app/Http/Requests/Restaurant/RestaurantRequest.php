@@ -25,7 +25,6 @@ class RestaurantRequest extends FormRequest
             'exterior_photos' => 'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
             'interior_photos' => 'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
            // 'more_images' => 'nullable|string',
-            'services' => 'nullable|json',
             'price' => 'required|numeric',
         ];
 

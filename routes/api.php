@@ -49,12 +49,13 @@ Route::middleware(['auth:api', 'admin'])->controller(SettingController::class)->
 
 Route::middleware(['auth:api', 'admin'])->prefix('managing-restaurants')->group(function () {
 
-Route::apiResource('restaurants', RestaurantController::class);
 Route::apiResource('services', ServiceController::class);
 Route::post('restaurants/{restaurant}/sync-services', [ServiceController::class, 'syncServices']);
 
 
 });
+
+Route::apiResource('restaurants', RestaurantController::class);
 
 Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(function () {
 
