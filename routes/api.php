@@ -46,13 +46,12 @@ Route::middleware(['auth:api', 'admin'])->controller(SettingController::class)->
     Route::delete('delete_user/{user}', 'destroy');
 });
 
-
+//////////////////resturants/////////////////////////////////////////////////////////
 Route::middleware(['auth:api', 'admin'])->prefix('managing-restaurants')->group(function () {
 
 Route::apiResource('restaurants', RestaurantController::class);
 Route::apiResource('services', ServiceController::class);
 Route::post('restaurants/{restaurant}/sync-services', [ServiceController::class, 'syncServices']);
-
 
 });
 
@@ -66,7 +65,7 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
     Route::delete('restaurants/{restaurantId}/reviews/{reviewId}', [ReviewController::class, 'destroy']);
 
     });
-
+////////////////////////////////////////////////////////////////////
     Route::middleware(['auth:api', 'admin'])->prefix('managing-reports')->group(function () {
 
         Route::get('/reports', [ReportController::class, 'index']);
@@ -82,8 +81,11 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
 
         });
 
-// //blog
-Route::apiResource('blog', BlogController::class)->middleware(['auth:api', 'admin']);;
+///blog//////////////////////////////////////////////////////////
+Route::apiResource('blog', BlogController::class);
+Route::post ('blogs/{blog}', [BlogController::class, 'update']);
+
+//->middleware(['auth:api', 'admin']);
 
 //about syria
 Route::apiResource('posts', PostController::class)->middleware(['auth:api','admin']);

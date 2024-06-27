@@ -56,6 +56,7 @@ class RestaurantController extends Controller
              'price'=>$request->price,
 
         ]);
+
         if ($request->hasFile('more_images')) {
             $images= $request->file('more_images');
 
@@ -70,14 +71,16 @@ class RestaurantController extends Controller
         $storagePath = Storage::disk('public')->put('images', $image, [
             'visibility' => Visibility::PUBLIC
         ]);
-        $restaurant->images()->create([
+        $more_image=$restaurant->images()->create([
             'image' => $storagePath
         ]);
+        $more_images[] = $more_image->image;
 
     }}
     return response()->json([
         'message' => 'Restaurant Created Successfully',
-        'restaurant' => $restaurant
+        'restaurant' => $restaurant,
+        'more_images' => $more_images,
     ], 201);
         }
 

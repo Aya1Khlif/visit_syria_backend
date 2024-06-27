@@ -22,11 +22,11 @@ class UpdateBlogRequest extends FormRequest
     public function rules(): array
     {
         return[
-            'title'       => 'string|max:255',
-            'content'       => 'string|max:1000',
-            'city' => 'string|max:20',
-            'category' => 'string|max:1',
-             'main_image'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+            'title'       => 'nullable|string|max:255',
+            'content'       => 'nullable|string|max:1000',
+            'city' => 'nullable|string|max:20',
+            'category' => 'nullable|string|max:1',
+             'main_image'       => 'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
              //'more_images'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
 
 

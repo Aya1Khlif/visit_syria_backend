@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Visibility;
+use Illuminate\Support\Facades\File;
 
 class BlogController extends Controller
 {
@@ -43,7 +44,8 @@ class BlogController extends Controller
                 'city' => $request->city,
                 'category' => $request->category,
                 'user_id'=>$request->user_id,
-                'main_image' => $this->UploadFile($request, 'Blog', 'main_image'),
+                'main_image'=>uploadImage($request->main_image)
+                //'main_image' => $this->UploadFile($request, 'Blog', 'main_image'),
 
 
             ]);
@@ -92,17 +94,15 @@ class BlogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBlogRequest  $request, Blog $blog)
+    public function update(UpdateBlogRequest  $request,Blog $blog)
     {
-            //code...
+            // //code...
             $blogData=[];
 
-            try {
+            // try {
 
 
-                DB::beginTransaction();
-
-
+            //     DB::beginTransaction();
                 if($request->title){
                     $blogData['title']=$request->title;
                 }
@@ -116,35 +116,37 @@ class BlogController extends Controller
                     $blogData['category']=$request->category;
                 }
                 if($request->main_image){
+
+                if ($request->hasFile('main_image')) {
+
+                    if ($blog->main_image && Storage::exists("images".$blog->main_image)) {
+                        Storage::delete(public_path("images".$blog->main_image));
+                        }
+
+
+
                     $main_image=uploadImage($request->main_image);
                     $blogData['main_image']=$main_image;
 
                 }
                 $blog->update($blogData);
 
-                // $blog->title = $request->input('title') ?? $blog->title;
-                // $blog->content = $request->input('content') ?? $blog->content;
-                // $blog->city = $request->input('city') ?? $blog->city;
-                // $blog->category = $request->input('category') ?? $blog->category;
-                // // //for test in postman
-                // $blog->main_image   = $request->input('main_image') ?? $blog->main_image;
-                // //$blog->more_images   = $request->input('more_images') ?? $blog->more_images;
-
-                // $blog->save();
 
                 DB::commit();
 
 
                 return ApiResponseService::success([
-                    'blog'=>$blogData
-                ],'Blog Updated successfully',200); // return $this->customeResponse(new BlogResource($blog), 'Blog Updated Successfully', 200);
-            } catch (\Throwable $th) {
-                DB::rollBack();
-                Log::error($th);
-                return response()->json(['message' => 'Something Error !'], 500);
-            }
+                    'blog'=>$blog,
 
-    }
+                ],'Blog Updated successfully',200);
+                //return $this->customeResponse(new BlogResource($blogData), 'Blog Updated Successfully', 200);
+            // }catch (\Throwable $th) {
+            //     DB::rollBack();
+            //     Log::error($th);
+            //     return response()->json(['message' => 'Something Error !'], 500);
+            // }
+
+    }}
 
     /**
      * Remove the specified resource from storage.
