@@ -15,6 +15,7 @@ use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\Restaurant\RestaurantReservationsController;
 
 use App\Http\Controllers\Restaurant\ServiceController;
+use App\Models\Blog;
 use Spatie\Permission\Models\Role;
 
 /*
@@ -84,10 +85,13 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
         });
 
 // //blog
-Route::apiResource('blog', BlogController::class)->middleware(['auth:api', 'admin']);;
+Route::apiResource('blog', BlogController::class);
+
+//->middleware(['auth:api', 'admin']);;
 
 //about syria
-Route::apiResource('posts', PostController::class)->middleware(['auth:api','admin']);
+Route::apiResource('posts', PostController::class);
+//->middleware(['auth:api','admin']);
 
 //landmarks
 Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:api', 'admin']);;
@@ -96,8 +100,11 @@ Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:a
 Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);;
 
 
-Route::controller(ImagesController::class)->group(function(){
+Route::controller(BlogController::class)->group(function(){
 
-    Route::post('BlogImages/{blog_id}','BlogImages');
+    Route::post('Blog','store');
+    Route::post('Blog/{blog}','update');
+
+
 
 });

@@ -43,9 +43,11 @@ class LandmarksController extends Controller
     public function store(LandmarksRequest $request)
     {
 
-       // $landmarks = Landmarks::create($request->validated());
-       $exterior_photos=uploadImage($request->exterior_photos);
-        $interior_photos=uploadImage($request->interior_photos);
+        if($request->exterior_photos){
+            $exterior_photos = uploadImage($request->exterior_photos);}
+            else $exterior_photos='null';
+            $interior_photos = uploadImage($request->interior_photos);
+
 
         $landmarks=Landmarks::create([
             'user_id'=>$request->user_id,
@@ -59,8 +61,9 @@ class LandmarksController extends Controller
              'services'=>$request->services,
              'price'=>$request->price,
             ]);
+            $more_images = [];
 
-       // return response()->json($landmarks, 201);
+
        if ($request->hasFile('more_images')) {
         $images= $request->file('more_images');
 
@@ -75,9 +78,14 @@ foreach($images as $image){
     $storagePath = Storage::disk('public')->put('images', $image, [
         'visibility' => Visibility::PUBLIC
     ]);
-    $landmarks->images()->create([
+    $more_image=$landmarks->images()->create([
         'image' => $storagePath
     ]);
+
+    $more_images[] = $more_image->image; // Collecting the image paths
+
+
+
 
 
 }
@@ -85,7 +93,8 @@ foreach($images as $image){
         }
 return response()->json([
 'message' => 'Landmark Created Successfully',
-'landmarks' => $landmarks
+'landmarks' => $landmarks,
+'more_images' => $more_images,
 ], 201);
     }
 

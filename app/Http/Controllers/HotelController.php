@@ -42,10 +42,11 @@ class HotelController extends Controller
 
     public function store(HotelRequest $request)
     {
-        // dd($request->all());
-        //$hotel = Hotel::create($request->validated());
-        $exterior_photos=uploadImage($request->exterior_photos);
-        $interior_photos=uploadImage($request->interior_photos);
+        if($request->exterior_photos){
+            $exterior_photos = uploadImage($request->exterior_photos);}
+            else $exterior_photos='null';
+            $interior_photos = uploadImage($request->interior_photos);
+
 
         $hotel=Hotel::create([
             'user_id'=>$request->user_id,
@@ -60,6 +61,8 @@ class HotelController extends Controller
              'price'=>$request->price,
 
         ]);
+        $more_images = [];
+
         if ($request->hasFile('more_images')) {
             $images= $request->file('more_images');
 
@@ -74,9 +77,11 @@ class HotelController extends Controller
         $storagePath = Storage::disk('public')->put('images', $image, [
             'visibility' => Visibility::PUBLIC
         ]);
-        $hotel->images()->create([
+        $more_image=$hotel->images()->create([
             'image' => $storagePath
         ]);
+        $more_images[] = $more_image->image; // Collecting the image paths
+
 
 
     }
@@ -84,7 +89,9 @@ class HotelController extends Controller
             }
 return response()->json([
     'message' => 'Hotel Created Successfully',
-    'hotel' => $hotel
+    'hotel' => $hotel,
+    'more_images' => $more_images, // Including more_images in the response
+
 ], 201);
     }
 

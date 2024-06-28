@@ -40,13 +40,12 @@ class BlogController extends Controller
             $blog = Blog::create([
                 'title' => $request->title,
                 'content' => $request->content,
-                'city' => $request->city,
-                'category' => $request->category,
                 'user_id'=>$request->user_id,
                 'main_image' => $this->UploadFile($request, 'Blog', 'main_image'),
 
 
             ]);
+            $more_images = [];
 
 
             if ($request->hasFile('more_images')) {
@@ -63,9 +62,12 @@ class BlogController extends Controller
             $storagePath = Storage::disk('public')->put('images', $image, [
                 'visibility' => Visibility::PUBLIC
             ]);
-            $blog->images()->create([
+
+            $more_image=$blog->images()->create([
                 'image' => $storagePath
             ]);
+            $more_images[] = $more_image->image; // Collecting the image paths
+
 
 
         }
@@ -75,7 +77,8 @@ class BlogController extends Controller
                 }
     return response()->json([
         'message' => 'Blog Created Successfully',
-        'blog' => new BlogResource($blog)
+        'blog' => new BlogResource($blog),
+        'more_images' => $more_images
     ], 201);
 }
 
@@ -101,20 +104,13 @@ class BlogController extends Controller
 
 
                 DB::beginTransaction();
-
-
                 if($request->title){
                     $blogData['title']=$request->title;
                 }
                 if($request->content){
                     $blogData['content']=$request->content;
                 }
-                if($request->city){
-                    $blogData['city']=$request->city;
-                }
-                if($request->category){
-                    $blogData['category']=$request->category;
-                }
+
                 if($request->main_image){
                     $main_image=uploadImage($request->main_image);
                     $blogData['main_image']=$main_image;
@@ -122,18 +118,8 @@ class BlogController extends Controller
                 }
                 $blog->update($blogData);
 
-                // $blog->title = $request->input('title') ?? $blog->title;
-                // $blog->content = $request->input('content') ?? $blog->content;
-                // $blog->city = $request->input('city') ?? $blog->city;
-                // $blog->category = $request->input('category') ?? $blog->category;
-                // // //for test in postman
-                // $blog->main_image   = $request->input('main_image') ?? $blog->main_image;
-                // //$blog->more_images   = $request->input('more_images') ?? $blog->more_images;
-
-                // $blog->save();
 
                 DB::commit();
-
 
                 return ApiResponseService::success([
                     'blog'=>$blogData

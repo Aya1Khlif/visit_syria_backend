@@ -19,10 +19,7 @@ class BlogResource extends JsonResource
             'id'          => $this->id,
             'title'       => $this->title,
             'content'       => $this->content,
-            'city' => $this->city,
-            'category' => $this->category,
             'main_image'       => asset(Storage::url($this->main_image)),
-            //'more_images'       => asset(Storage::url($this->more_images)),
         ];
     }
 }
