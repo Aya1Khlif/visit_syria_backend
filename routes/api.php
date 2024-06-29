@@ -104,6 +104,9 @@ Route::controller(BlogController::class)->group(function(){
 
     Route::post('Blog','store');
     Route::post('Blog/{blog}','update');
+    Route::get('show_bloge/{blog}','show');
+    Route::get('all_blogs','index');
+    Route::delete('delete_blog/{blog}','destroy');
 
 
 

@@ -26,6 +26,7 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::all();
+
         $data = BlogResource::collection($blogs);
         return $this->customeResponse($data, 'Done!', 200);
     }
@@ -77,7 +78,7 @@ class BlogController extends Controller
                 }
     return response()->json([
         'message' => 'Blog Created Successfully',
-        'blog' => new BlogResource($blog),
+        'blog' => $blog,
         'more_images' => $more_images
     ], 201);
 }
@@ -88,8 +89,13 @@ class BlogController extends Controller
     public function show(Blog $blog)
     {
         //
-        $data = new BlogResource($blog);
-        return $this->customeResponse($data, 'Done!', 200);
+       // $data = new BlogResource($blog);
+        $more_images=$blog->images()->get('image');
+        return response()->json([
+            'message' => 'Blog Created Successfully',
+            'blog' => $blog,
+            'more_images' => $more_images
+        ], 201);
     }
 
     /**
@@ -99,37 +105,80 @@ class BlogController extends Controller
     {
             //code...
             $blogData=[];
-
             try {
-
-
-                DB::beginTransaction();
+               DB::beginTransaction();
                 if($request->title){
                     $blogData['title']=$request->title;
                 }
                 if($request->content){
                     $blogData['content']=$request->content;
                 }
-
                 if($request->main_image){
                     $main_image=uploadImage($request->main_image);
                     $blogData['main_image']=$main_image;
 
                 }
+
+
+
+
+    $oldImages = $blog->images->pluck('image')->toArray();
+    foreach ($oldImages as $oldImage) {
+        $imagePath = storage_path( 'app/public/' .$oldImage);
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        } else {
+
+            Log::warning("File not found: " . $imagePath);
+        }
+    }
+
+
+    $blog->images()->delete();
+
+
+    $more_images = [];
+    if ($request->hasFile('more_images')) {
+        $images = $request->file('more_images');
+
+        foreach ($images as $image) {
+            $originalName = $image->getClientOriginalName();
+
+            // التحقق من وجود امتداد مزدوج في اسم الصورة
+            if (preg_match('/\.[^.]+\./', $originalName)) {
+                throw new Exception(403, trans('general.notAllowedAction'));
+            }
+
+            // تخزين الصورة الجديدة في نظام التخزين
+            $storagePath = Storage::disk('public')->put('images', $image, [
+                'visibility' => 'public'
+            ]);
+
+            // تحديث سجلات الصور الجديدة في قاعدة البيانات
+            $more_image = $blog->images()->create([
+                'image' => $storagePath
+            ]);
+
+            $more_images[] = $more_image->image;
+        }}
                 $blog->update($blogData);
 
-
                 DB::commit();
+                return response()->json([
+                    'message'=>'Blog Updated successfully',
+                    'status' => 200,
+                     'blog'=>$blogData,
+                    'more_images'=>$more_images
 
-                return ApiResponseService::success([
-                    'blog'=>$blogData
-                ],'Blog Updated successfully',200); // return $this->customeResponse(new BlogResource($blog), 'Blog Updated Successfully', 200);
-            } catch (\Throwable $th) {
+                ]);
+            }catch (\Throwable $th) {
                 DB::rollBack();
                 Log::error($th);
                 return response()->json(['message' => 'Something Error !'], 500);
-            }
 
+
+    }
     }
 
     /**
@@ -137,6 +186,20 @@ class BlogController extends Controller
      */
     public function destroy(Blog $blog)
     {
+        $oldImages = $blog->images->pluck('image')->toArray();
+        foreach ($oldImages as $oldImage) {
+            $imagePath = storage_path( 'app/public/' .$oldImage);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            } else {
+
+                Log::warning("File not found: " . $imagePath);
+            }
+        }
+
+
+        $blog->images()->delete();
         //
         $blog->delete();
         return response()->json(['message' => 'Blog Deleted'], 200);
