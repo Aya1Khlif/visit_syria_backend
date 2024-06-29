@@ -101,7 +101,7 @@ class BlogController extends Controller
        // $data = new BlogResource($blog);
         $more_images=$blog->images()->get('image');
         return response()->json([
-            'message' => 'Blog Created Successfully',
+            'message' => 'Blogs',
             'blog' => $blog,
             'more_images' => $more_images
         ], 201);

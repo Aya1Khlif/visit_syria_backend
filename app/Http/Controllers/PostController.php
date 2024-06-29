@@ -99,7 +99,7 @@ class PostController extends Controller
 
             $more_images=$post->images()->get('image');
             return response()->json([
-                'message' => 'Post Created Successfully',
+                'message' => 'Posts',
                 'post' => $post,
                 'more_images' => $more_images
             ], 201);

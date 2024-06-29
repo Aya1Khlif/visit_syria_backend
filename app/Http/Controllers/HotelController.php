@@ -18,6 +18,7 @@ class HotelController extends Controller
 {
     public function index(Request $request)
     {
+
         $query = Hotel::query();
 
         if ($request->has('location')) {
@@ -33,11 +34,14 @@ class HotelController extends Controller
         return response()->json($hotels);
     }
 
-    public function show($id)
+    public function show(Hotel $hotel)
     {
-        $hotel = Hotel::findOrFail($id);
-
-        return response()->json($hotel);
+        $more_images=$hotel->images()->get('image');
+        return response()->json([
+            'message' => 'Hotels',
+            'hotel' => $hotel,
+            'more_images' => $more_images
+        ], 201);
     }
 
     public function store(HotelRequest $request)
@@ -137,32 +141,87 @@ return response()->json([
 
                 }
 
+                $oldImages = $hotel->images->pluck('image')->toArray();
+                foreach ($oldImages as $oldImage) {
+                    $imagePath = storage_path( 'app/public/' .$oldImage);
+
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    } else {
+
+                        Log::warning("File not found: " . $imagePath);
+                    }
+                }
+
+
+                $hotel->images()->delete();
+
+
+                $more_images = [];
+                if ($request->hasFile('more_images')) {
+                    $images = $request->file('more_images');
+
+                    foreach ($images as $image) {
+                        $originalName = $image->getClientOriginalName();
+
+                        // التحقق من وجود امتداد مزدوج في اسم الصورة
+                        if (preg_match('/\.[^.]+\./', $originalName)) {
+                            throw new Exception(403, trans('general.notAllowedAction'));
+                        }
+
+                        // تخزين الصورة الجديدة في نظام التخزين
+                        $storagePath = Storage::disk('public')->put('images', $image, [
+                            'visibility' => 'public'
+                        ]);
+
+                        // تحديث سجلات الصور الجديدة في قاعدة البيانات
+                        $more_image = $hotel->images()->create([
+                            'image' => $storagePath
+                        ]);
+
+                        $more_images[] = $more_image->image;
+                    }}
+
+
+
                 $hotel->update($hotelData);
 
 
                 DB::commit();
 
 
-                return ApiResponseService::success([
-                    'hotel'=>$hotelData
-                ],'hotel Updated successfully',200); // return $this->customeResponse(new hotelResource($hotel), 'hotel Updated Successfully', 200);
-            } catch (\Throwable $th) {
+                return response()->json([
+                    'message'=>'hotel Updated successfully',
+                    'status' => 200,
+                     'hotel'=>$hotelData,
+                    'more_images'=>$more_images
+
+                ]);
+            }catch (\Throwable $th) {
                 DB::rollBack();
                 Log::error($th);
                 return response()->json(['message' => 'Something Error !'], 500);
-            }
-        // $hotel = Hotel::findOrFail($id);
 
-        // $hotel->update($request->validated());
+    }}
 
-        return response()->json($hotel);
-    }
-
-    public function destroy($id)
+    public function destroy(Hotel $hotel)
     {
-        $hotel = Hotel::findOrFail($id);
-        $hotel->delete();
+        $oldImages = $hotel->images->pluck('image')->toArray();
+        foreach ($oldImages as $oldImage) {
+            $imagePath = storage_path( 'app/public/' .$oldImage);
 
-        return response()->json(null, 204);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            } else {
+
+                Log::warning("File not found: " . $imagePath);
+            }
+        }
+
+
+        $hotel->images()->delete();
+
+        $hotel->delete();
+        return response()->json(['message' => 'Hotel Deleted'], 200);
     }
 }

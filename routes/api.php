@@ -84,20 +84,13 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
 
         });
 
-// //blog
-Route::apiResource('blog', BlogController::class);
 
-//->middleware(['auth:api', 'admin']);;
-
-//about syria
-Route::apiResource('posts', PostController::class);
-//->middleware(['auth:api','admin']);
 
 //landmarks
 Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:api', 'admin']);;
 
 //Hotels
-Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);;
+Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);
 
 //////////////////////////////////////Blogs/////////////////////////////////
 Route::controller(BlogController::class)->group(function(){
@@ -123,3 +116,15 @@ Route::controller(PostController::class)->group(function(){
     Route::delete('delete_post/{post}','destroy');
 
 });
+
+//////////////////////Hotels/////////////////
+Route::controller(HotelController::class)->group(function(){
+
+    Route::post('add_hotel','store');
+    Route::post('Edit_hotel/{hotel}','update');
+    Route::get('show_hotel/{hotel}','show');
+    Route::get('all_hotels','index');
+    Route::delete('delete_hotel/{hotel}','destroy');
+
+});
+
