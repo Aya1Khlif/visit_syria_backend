@@ -99,7 +99,7 @@ Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:a
 //Hotels
 Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);;
 
-
+//////////////////////////////////////Blogs/////////////////////////////////
 Route::controller(BlogController::class)->group(function(){
 
     Route::post('Blog','store');
@@ -109,5 +109,17 @@ Route::controller(BlogController::class)->group(function(){
     Route::delete('delete_blog/{blog}','destroy');
 
 
+
+});
+////////////////////////////////////Posts//////////////////////////////////////
+
+//Route::middleware(['auth:api', 'admin'])->
+Route::controller(PostController::class)->group(function(){
+
+    Route::post('add_Post','store');
+    Route::post('Edit_Post/{post}','update');
+    Route::get('show_post/{post}','show');
+    Route::get('all_posts','index');
+    Route::delete('delete_post/{post}','destroy');
 
 });

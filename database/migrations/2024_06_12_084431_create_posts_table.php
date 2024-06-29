@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('content');
             $table->string('category');
             $table->foreignId('user_id');
-            $table->softDeletes();
+            // $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -25,9 +25,17 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return $this->customeResponse(PostResource::collection($posts),"Done",200);
-    }
+        if(!empty($posts)){
+            return response()->json([
+                'message' => 'Done!',
+                'post' => $posts,
 
+            ], 201);        }
+            else{
+                return response()->json([
+                    'message' => 'There are not any post',]);
+
+        }}
     /**
      * Store a newly created resource in storage.
      */
@@ -88,12 +96,15 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        try {
-            return $this->customeResponse(new PostResource($post),"Done",200);
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return $this->customeResponse(null,"post not found",404);
-        }
+
+            $more_images=$post->images()->get('image');
+            return response()->json([
+                'message' => 'Post Created Successfully',
+                'post' => $post,
+                'more_images' => $more_images
+            ], 201);
+
+
     }
 
     /**
@@ -102,7 +113,7 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
 
-        $blogData=[];
+        $postData=[];
 
         try {
 
@@ -111,35 +122,81 @@ class PostController extends Controller
 
 
             if($request->title){
-                $blogData['title']=$request->title;
+                $postData['title']=$request->title;
             }
             if($request->content){
-                $blogData['content']=$request->content;
+                $postData['content']=$request->content;
             }
 
             if($request->category){
-                $blogData['category']=$request->category;
+                $postData['category']=$request->category;
             }
             if($request->main_image){
                 $main_image=uploadImage($request->main_image);
-                $blogData['main_image']=$main_image;
+                $postData['main_image']=$main_image;
 
             }
-            $post->update($blogData);
+            $oldImages = $post->images->pluck('image')->toArray();
+            foreach ($oldImages as $oldImage) {
+                $imagePath = storage_path( 'app/public/' .$oldImage);
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                } else {
+
+                    Log::warning("File not found: " . $imagePath);
+                }
+            }
+
+
+            $post->images()->delete();
+
+
+            $more_images = [];
+            if ($request->hasFile('more_images')) {
+                $images = $request->file('more_images');
+
+                foreach ($images as $image) {
+                    $originalName = $image->getClientOriginalName();
+
+                    // التحقق من وجود امتداد مزدوج في اسم الصورة
+                    if (preg_match('/\.[^.]+\./', $originalName)) {
+                        throw new Exception(403, trans('general.notAllowedAction'));
+                    }
+
+                    // تخزين الصورة الجديدة في نظام التخزين
+                    $storagePath = Storage::disk('public')->put('images', $image, [
+                        'visibility' => 'public'
+                    ]);
+
+                    // تحديث سجلات الصور الجديدة في قاعدة البيانات
+                    $more_image = $post->images()->create([
+                        'image' => $storagePath
+                    ]);
+
+                    $more_images[] = $more_image->image;
+                }}
+            $post->update($postData);
 
 
 
             DB::commit();
 
 
-            return ApiResponseService::success([
-                'post'=>$blogData
-            ],'Post Updated successfully',200);
-        } catch (\Throwable $th) {
+            return response()->json([
+                'message'=>'post Updated successfully',
+                'status' => 200,
+                 'post'=>$postData,
+                'more_images'=>$more_images
+
+            ]);
+        }catch (\Throwable $th) {
             DB::rollBack();
             Log::error($th);
             return response()->json(['message' => 'Something Error !'], 500);
-        }
+
+
+}
 
 
     }
@@ -149,12 +206,25 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        try {
-            $post->delete();
-            return $this->customeResponse("","post deleted",200);
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return $this->customeResponse(null,"Error!!,there is something not correct",500);
+
+        $oldImages = $post->images->pluck('image')->toArray();
+        foreach ($oldImages as $oldImage) {
+            $imagePath = storage_path( 'app/public/' .$oldImage);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            } else {
+
+                Log::warning("File not found: " . $imagePath);
+            }
         }
+
+
+        $post->images()->delete();
+
+        $post->delete();
+        return response()->json(['message' => 'Post Deleted'], 200);
     }
-}
+
+    }
+

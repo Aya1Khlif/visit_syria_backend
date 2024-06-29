@@ -14,7 +14,6 @@ class Blog extends Model
         'title',
         'main_image',
         'content',
-
         'user_id'
     ];
 

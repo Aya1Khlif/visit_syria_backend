@@ -23,10 +23,10 @@ class UpdatePostRequest extends FormRequest
     {
 
             return [
-            'title' => 'required|string|max:255',
-            'category' =>'required','string',
-            'content'=>'required|string|max:2000',
-            'main_image'=>'required|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
+            'title' => 'nullable|string|max:255',
+            'category' =>'nullable','string',
+            'content'=>'nullable|string|max:2000',
+            'main_image'=>'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
             ];
 
     }

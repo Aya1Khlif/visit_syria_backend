@@ -26,9 +26,18 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::all();
+        if(!empty($blogs)){
+            $data = BlogResource::collection($blogs);
+            return response()->json([
+                'message' => 'Done!',
+                'blog' => $data,
 
-        $data = BlogResource::collection($blogs);
-        return $this->customeResponse($data, 'Done!', 200);
+            ], 201);        }
+            else{
+                return response()->json([
+                    'message' => 'There are not any blog',]);
+
+        }
     }
 
     /**
