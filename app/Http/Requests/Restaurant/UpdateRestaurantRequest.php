@@ -23,7 +23,7 @@ class UpdateRestaurantRequest extends FormRequest
             'long_description' => 'nullable|string',
             'exterior_photos' => 'nullable|string',
             'interior_photos' => 'nullable|string',
-            // 'more_images' => 'nullable|string',
+
             'price' => 'sometimes|numeric',
         ];
     }

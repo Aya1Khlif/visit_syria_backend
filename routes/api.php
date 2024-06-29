@@ -17,6 +17,7 @@ use App\Http\Controllers\Restaurant\RestaurantReservationsController;
 use App\Http\Controllers\Restaurant\ServiceController;
 use App\Models\Blog;
 use App\Models\Landmarks;
+use App\Models\Restaurant;
 use Spatie\Permission\Models\Role;
 
 /*
@@ -57,7 +58,7 @@ Route::post('restaurants/{restaurant}/sync-services', [ServiceController::class,
 
 });
 
-Route::apiResource('restaurants', RestaurantController::class);
+// Route::apiResource('restaurants', RestaurantController::class);
 
 Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(function () {
 
@@ -137,5 +138,15 @@ Route::controller(LandmarksController::class)->group(function(){
     Route::get('show_landMark/{landmark}','show');
     Route::get('all_landMarks','index');
     Route::delete('delete_landMark/{landmark}','destroy');
+
+});
+/////////////////restaurants//////////////////
+Route::controller(RestaurantController::class)->group(function(){
+
+    Route::post('add_resturant','store');
+    Route::post('Edit_restaurant/{restaurant}','update');
+    Route::get('show_restaurant/{id}','show');
+    Route::get('all_Restaurants','index');
+    Route::delete('delete_restaurant/{restaurant}','destroy');
 
 });
