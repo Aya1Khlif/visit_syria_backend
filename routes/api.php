@@ -16,6 +16,7 @@ use App\Http\Controllers\Restaurant\RestaurantReservationsController;
 
 use App\Http\Controllers\Restaurant\ServiceController;
 use App\Models\Blog;
+use App\Models\Landmarks;
 use Spatie\Permission\Models\Role;
 
 /*
@@ -128,3 +129,13 @@ Route::controller(HotelController::class)->group(function(){
 
 });
 
+//////////////////////LandMarks//////////////////
+Route::controller(LandmarksController::class)->group(function(){
+
+    Route::post('add_landMark','store');
+    Route::post('Edit_landMark/{landmark}','update');
+    Route::get('show_landMark/{landmark}','show');
+    Route::get('all_landMarks','index');
+    Route::delete('delete_landMark/{landmark}','destroy');
+
+});

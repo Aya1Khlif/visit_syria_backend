@@ -101,11 +101,14 @@ return response()->json([
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Landmarks $landmark)
     {
-        $landmarks = Landmarks::findOrFail($id);
-
-        return response()->json($landmarks);
+        $more_images=$landmark->images()->get('image');
+        return response()->json([
+            'message' => 'landmarks',
+            'landmark' => $landmark,
+            'more_images' => $more_images
+        ], 201);
     }
 
     /**
@@ -113,11 +116,7 @@ return response()->json([
      */
     public function update(UpdateLandmarksRequest $request,Landmarks $landmark)
     {
-        // $landmarks = Landmarks::findOrFail($id);
 
-        // $landmarks->update($request->validated());
-
-        // return response()->json($landmarks);
         $landmarkData=[];
 
         try {
@@ -157,34 +156,91 @@ return response()->json([
 
             }
 
+            $oldImages = $landmark->images->pluck('image')->toArray();
+                foreach ($oldImages as $oldImage) {
+                    $imagePath = storage_path( 'app/public/' .$oldImage);
+
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    } else {
+
+                        Log::warning("File not found: " . $imagePath);
+                    }
+                }
+
+
+                $landmark->images()->delete();
+
+
+                $more_images = [];
+                if ($request->hasFile('more_images')) {
+                    $images = $request->file('more_images');
+
+                    foreach ($images as $image) {
+                        $originalName = $image->getClientOriginalName();
+
+                        // التحقق من وجود امتداد مزدوج في اسم الصورة
+                        if (preg_match('/\.[^.]+\./', $originalName)) {
+                            throw new Exception(403, trans('general.notAllowedAction'));
+                        }
+
+                        // تخزين الصورة الجديدة في نظام التخزين
+                        $storagePath = Storage::disk('public')->put('images', $image, [
+                            'visibility' => 'public'
+                        ]);
+
+                        // تحديث سجلات الصور الجديدة في قاعدة البيانات
+                        $more_image = $landmark->images()->create([
+                            'image' => $storagePath
+                        ]);
+
+                        $more_images[] = $more_image->image;
+                    }}
+
+
             $landmark->update($landmarkData);
 
 
             DB::commit();
 
 
-            return ApiResponseService::success([
-                'landmark'=>$landmarkData
-            ],'landmark Updated successfully',200);
-        } catch (\Throwable $th) {
+            return response()->json([
+                'message'=>'landmark Updated successfully',
+                'status' => 200,
+                 'landmark'=>$landmarkData,
+                'more_images'=>$more_images
+
+            ]);
+        }catch (\Throwable $th) {
             DB::rollBack();
             Log::error($th);
             return response()->json(['message' => 'Something Error !'], 500);
-        }
 
-
-    // return response()->json($landmark);
+}
 }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Landmarks $landmark)
     {
-        $landmarks = Landmarks::findOrFail($id);
-        $landmarks->delete();
+        $oldImages = $landmark->images->pluck('image')->toArray();
+        foreach ($oldImages as $oldImage) {
+            $imagePath = storage_path( 'app/public/' .$oldImage);
 
-        return response()->json(null, 204);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            } else {
+
+                Log::warning("File not found: " . $imagePath);
+            }
+        }
+
+
+        $landmark->images()->delete();
+
+        $landmark->delete();
+        return response()->json(['message' => 'Landmark Deleted'], 200);
     }
 }
