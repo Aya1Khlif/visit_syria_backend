@@ -25,11 +25,11 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:users',
+            'password' => 'nullable|string|min:6',
             'image'=>'nullable|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            'role'=>'required|string'
+
         ];
 
     }

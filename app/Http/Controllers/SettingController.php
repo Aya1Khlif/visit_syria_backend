@@ -26,24 +26,24 @@ class SettingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserRequest $request){
+    // public function store(UserRequest $request){
 
-        $data = $request->validated();
-        $response = $this->authService->storeUser($data);
+    //     $data = $request->validated();
+    //     $response = $this->authService->storeUser($data);
 
 
-        return ApiResponseService::success([
-            'user' => $response['user'],
-            'authorisation' => [
-                'token' => $response['token'],
-                'type' => 'bearer',
-            ]
-        ], 'User created successfully', $response['code']);
-    }
+    //     return ApiResponseService::success([
+    //         'user' => $response['user'],
+    //         'authorisation' => [
+    //             'token' => $response['token'],
+    //             'type' => 'bearer',
+    //         ]
+    //     ], 'User created successfully', $response['code']);
+    // }
     /**
      * Display the specified resource.
      */
-    public function update(Request $request,User $user)
+    public function update(UserRequest $request,User $user)
     {
         $userData=[];
         if($request->name){
@@ -55,18 +55,22 @@ class SettingController extends Controller
         if($request->password){
             $userData['password']=$request->password;
         }
-        if($request->role){
-            $userData['role']=$request->role;
-        }
+
         if($request->image){
             $image=uploadImage($request->image);
             $userData['image']=$image;
 
         }
         $user->update($userData);
-        return ApiResponseService::success([
-            'user'=>$userData
-        ],'User Updated successfully',200);
+        // return ApiResponseService::success([
+        //     'user'=>$userData
+        // ],'User Updated successfully',200);
+
+        return response()->json([
+            'status'=>'success',
+            'user'=>$user
+
+        ]);
 
 
 
@@ -75,8 +79,12 @@ class SettingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
+        return response()->json([
+            'Admin'=> $user
+
+        ]);
 
 
     }

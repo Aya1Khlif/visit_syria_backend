@@ -42,6 +42,7 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware(['auth:api', 'admin'])->controller(SettingController::class)->prefix('users')->group(function () {
     Route::post('store_user', 'store');
     Route::post('update_user/{user}', 'update');
+    Route::get('show_user/{user}','show');
     Route::delete('delete_user/{user}', 'destroy');
 });
 
