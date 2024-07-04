@@ -1,35 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequestr;
-use App\Http\Requests\RegisteRequestr;
-use App\Services\AuthService;
+
+namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\ApiResponseService;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
 
-     /**
-     * @var AuthService
-     */
-    protected $authService;
 
-    /**
-     * AuthController constructor.
-     *
-     * @param AuthService $authService
-     */
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
-    }
 
-    public function login(LoginRequestr $request)
+    public function login(Request $request)
     {
-        $request->validated();
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
         $credentials = $request->only('email', 'password');
 
         $token = Auth::attempt($credentials);
@@ -50,57 +39,39 @@ class AuthController extends Controller
                 ]
             ]);
 
-
-    /**
-     * Register a new user.
-     *
-     * @param RegisterRequest $request
-     * @return JsonResponse
-     */
-
-
-
-
-
     }
 
-    // public function register(RegisteRequestr $request){
+    public function register(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
 
-    //     $data = $request->validated();
-    //     $response = $this->authService->register($data);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-
-    //     return ApiResponseService::success([
-    //         'user' => $response['user'],
-    //         'authorisation' => [
-    //             'token' => $response['token'],
-    //             'type' => 'bearer',
-    //         ]
-    //     ], 'User created successfully', $response['code']);
-    // }
-
+        $token = Auth::login($user);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User created successfully',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+    }
 
     public function logout()
     {
-
-        $response=$this->authService->logout();
-        return ApiResponseService::success([null,$response['message'],$response['code']
-
+        Auth::logout();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully logged out',
         ]);
-
-
     }
-
-    // public function refresh()
-    // {
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'user' => Auth::user(),
-    //         'authorisation' => [
-    //             'token' => Auth::refresh(),
-    //             'type' => 'bearer',
-    //         ]
-    //     ]);
-    // }
-
 }
