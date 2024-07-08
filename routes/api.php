@@ -11,14 +11,10 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\HotelController;
-use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\Restaurant\RestaurantReservationsController;
 
 use App\Http\Controllers\Restaurant\ServiceController;
-use App\Models\Blog;
-use App\Models\Landmarks;
-use App\Models\Restaurant;
-use Spatie\Permission\Models\Role;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,15 +33,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
-    //Route::post('register', 'register');
+    Route::post('register', 'register');
     Route::post('logout', 'logout')->middleware('auth:api');
-    //Route::post('refresh', 'refresh')->middleware('auth:api');
+
 
 });
 //authentication
 Route::middleware(['auth:api', 'admin'])->controller(SettingController::class)->prefix('users')->group(function () {
     Route::post('store_user', 'store');
     Route::post('update_user/{user}', 'update');
+    Route::get('show_user/{user}','show');
     Route::delete('delete_user/{user}', 'destroy');
 });
 
@@ -58,7 +55,6 @@ Route::post('restaurants/{restaurant}/sync-services', [ServiceController::class,
 
 });
 
-// Route::apiResource('restaurants', RestaurantController::class);
 
 Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(function () {
 
@@ -86,16 +82,8 @@ Route::middleware(['auth:api', 'admin'])->prefix('managing-reviews')->group(func
 
         });
 
-
-
-//landmarks
-Route::apiResource('landmarks', LandmarksController::class)->middleware(['auth:api', 'admin']);;
-
-//Hotels
-Route::apiResource('hotels', HotelController::class)->middleware(['auth:api', 'admin']);
-
 //////////////////////////////////////Blogs/////////////////////////////////
-Route::controller(BlogController::class)->group(function(){
+Route::middleware(['auth:api', 'admin'])->controller(BlogController::class)->group(function(){
 
     Route::post('Blog','store');
     Route::post('Blog/{blog}','update');
@@ -109,7 +97,7 @@ Route::controller(BlogController::class)->group(function(){
 ////////////////////////////////////Posts//////////////////////////////////////
 
 //Route::middleware(['auth:api', 'admin'])->
-Route::controller(PostController::class)->group(function(){
+Route::middleware(['auth:api', 'admin'])->controller(PostController::class)->group(function(){
 
     Route::post('add_Post','store');
     Route::post('Edit_Post/{post}','update');
@@ -120,7 +108,7 @@ Route::controller(PostController::class)->group(function(){
 });
 
 //////////////////////Hotels/////////////////
-Route::controller(HotelController::class)->group(function(){
+Route::middleware(['auth:api', 'admin'])->controller(HotelController::class)->group(function(){
 
     Route::post('add_hotel','store');
     Route::put('Edit_hotel/{hotel}','update');
@@ -131,7 +119,7 @@ Route::controller(HotelController::class)->group(function(){
 });
 
 //////////////////////LandMarks//////////////////
-Route::controller(LandmarksController::class)->group(function(){
+Route::middleware(['auth:api', 'admin'])->controller(LandmarksController::class)->group(function(){
 
     Route::post('add_landMark','store');
     Route::put('Edit_landMark/{landmark}','update');
@@ -141,7 +129,7 @@ Route::controller(LandmarksController::class)->group(function(){
 
 });
 /////////////////restaurants//////////////////
-Route::controller(RestaurantController::class)->group(function(){
+Route::middleware(['auth:api', 'admin'])->controller(RestaurantController::class)->group(function(){
 
     Route::post('add_resturant','store');
     Route::put('Edit_restaurant/{restaurant}','update');
