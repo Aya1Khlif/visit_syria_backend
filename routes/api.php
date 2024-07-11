@@ -27,9 +27,9 @@ use App\Http\Controllers\Restaurant\ServiceController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
@@ -128,7 +128,7 @@ Route::middleware(['auth:api', 'admin'])->controller(LandmarksController::class)
     Route::delete('delete_landMark/{landmark}','destroy');
 
 });
-/////////////////restaurants//////////////////
+/////////////////restaurants/////////////
 Route::middleware(['auth:api', 'admin'])->controller(RestaurantController::class)->group(function(){
 
     Route::post('add_resturant','store');
