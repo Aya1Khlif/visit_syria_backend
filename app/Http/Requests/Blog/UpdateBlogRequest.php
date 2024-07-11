@@ -23,7 +23,7 @@ class UpdateBlogRequest extends FormRequest
     {
         return[
             'title'       => 'string|max:255',
-            'content'       => 'string|max:1000',
+            'content'       => 'nullable',
              'main_image'       => 'image|mimes:png,jpg,jpeg,gif,sug|max:2048',
 
 

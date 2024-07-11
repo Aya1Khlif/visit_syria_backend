@@ -25,7 +25,7 @@ class UpdatePostRequest extends FormRequest
             return [
             'title' => 'nullable|string|max:255',
             'category' =>'nullable','string',
-            'content'=>'nullable|string|max:2000',
+            'content'=>'nullable',
             'main_image'=>'nullable|image|mimes:png,jpg,jpeg,gif,sug|max:2048',
             ];
 
