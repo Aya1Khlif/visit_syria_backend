@@ -87,8 +87,8 @@ Route::middleware(['auth:api', 'admin'])->controller(BlogController::class)->gro
 
     Route::post('Blog','store');
     Route::post('Blog/{blog}','update');
-    Route::get('show_bloge/{blog}','show');
-    Route::get('all_blogs','index');
+    Route::get('show_bloge/{blog}','show')->withoutMiddleware(['auth:api', 'admin']);
+    Route::get('all_blogs','index')->withoutMiddleware(['auth:api', 'admin']);
     Route::delete('delete_blog/{blog}','destroy');
 
 
@@ -101,8 +101,8 @@ Route::middleware(['auth:api', 'admin'])->controller(PostController::class)->gro
 
     Route::post('add_Post','store');
     Route::post('Edit_Post/{post}','update');
-    Route::get('show_post/{post}','show');
-    Route::get('all_posts','index');
+    Route::get('show_post/{post}','show')->withoutMiddleware(['auth:api', 'admin']);
+    Route::get('all_posts','index')->withoutMiddleware(['auth:api', 'admin']);
     Route::delete('delete_post/{post}','destroy');
 
 });
@@ -112,8 +112,8 @@ Route::middleware(['auth:api', 'admin'])->controller(HotelController::class)->gr
 
     Route::post('add_hotel','store');
     Route::put('Edit_hotel/{hotel}','update');
-    Route::get('show_hotel/{hotel}','show');
-    Route::get('all_hotels','index');
+    Route::get('show_hotel/{hotel}','show')->withoutMiddleware(['auth:api', 'admin']);
+    Route::get('all_hotels','index')->withoutMiddleware(['auth:api', 'admin']);
     Route::delete('delete_hotel/{hotel}','destroy');
 
 });
@@ -123,8 +123,8 @@ Route::middleware(['auth:api', 'admin'])->controller(LandmarksController::class)
 
     Route::post('add_landMark','store');
     Route::put('Edit_landMark/{landmark}','update');
-    Route::get('show_landMark/{landmark}','show');
-    Route::get('all_landMarks','index');
+    Route::get('show_landMark/{landmark}','show')->withoutMiddleware(['auth:api', 'admin']);
+    Route::get('all_landMarks','index')->withoutMiddleware(['auth:api', 'admin']);
     Route::delete('delete_landMark/{landmark}','destroy');
 
 });
@@ -133,8 +133,8 @@ Route::middleware(['auth:api', 'admin'])->controller(RestaurantController::class
 
     Route::post('add_resturant','store');
     Route::put('Edit_restaurant/{restaurant}','update');
-    Route::get('show_restaurant/{id}','show');
-    Route::get('all_Restaurants','index');
+    Route::get('show_restaurant/{id}','show')->withoutMiddleware(['auth:api', 'admin']);
+    Route::get('all_Restaurants','index')->withoutMiddleware(['auth:api', 'admin']);
     Route::delete('delete_restaurant/{restaurant}','destroy');
 
 });
